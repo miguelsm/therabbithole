@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+cat out/html/*.html > chapters.html
+str=__content__
+sed -e "/$str/r chapters.html" -e "/$str/d" template.html > book.html
+weasyprint book.html book.pdf

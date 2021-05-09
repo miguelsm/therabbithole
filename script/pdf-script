@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+mkdir -p build
+
+pandoc \
+    --pdf-engine=xelatex \
+    --from markdown \
+    --template=./eisvogel.latex \
+    --highlight-style tango \
+    --toc -N \
+    --listings \
+    -f markdown-implicit_figures \
+    -o build/output.pdf \
+    out/md/*.md
