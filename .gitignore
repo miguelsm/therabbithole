@@ -9,6 +9,8 @@ build/
 in/
 out/
 book.html
+template-with-content.html
+toc-list-items.html
 book.pdf
 chapters.html
 urls

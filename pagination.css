@@ -1,0 +1,102 @@
+@charset "UTF-8";
+@font-face {
+  font-family: Fira Sans;
+  font-weight: 400;
+  src: url(FiraSans-Regular.otf); }
+
+@font-face {
+  font-family: Fira Sans;
+  font-style: italic;
+  font-weight: 400;
+  src: url(FiraSans-Italic.otf); }
+
+@font-face {
+  font-family: Fira Sans;
+  font-weight: 300;
+  src: url(FiraSans-Light.otf); }
+
+@font-face {
+  font-family: Fira Sans;
+  font-style: italic;
+  font-weight: 300;
+  src: url(FiraSans-LightItalic.otf); }
+
+@font-face {
+  font-family: Fira Sans;
+  font-weight: bold;
+  src: url(FiraSans-Bold.otf); }
+
+@page {
+  @bottom-left {
+    content: counter(page);
+    font-size: 9pt;
+    height: 1cm;
+    vertical-align: middle;
+  }
+  @top-right {
+    content: string(heading);
+    font-family: Fira Sans;
+    font-size: 9pt;
+    height: 1cm;
+    vertical-align: middle;
+    width: 100%;
+  }
+}
+
+@page :blank {
+  @bottom-left {
+    background: none;
+    content: ''; }
+  @top-right {
+    content: none; } }
+
+@page no-chapter {
+  @top-right {
+    content: none;
+  }
+}
+
+html body h2 {
+  break-before: always;
+  font-family: Fira Sans;
+  font-size: 28pt;
+  string-set: heading content();
+  page: no-chapter;
+}
+
+html body article#contents {
+  break-before: right;
+  break-after: left;
+  page: no-chapter;
+}
+html body article#contents h2 {
+  font-size: 20pt;
+  font-weight: 400;
+  margin-bottom: 3cm;
+}
+html body article#contents h3 {
+  font-weight: 500;
+  margin: 3em 0 1em;
+}
+html body article#contents ul {
+  list-style: none;
+  padding-left: 0;
+}
+html body article#contents ul li {
+  border-top: .25pt solid #c1c1c1;
+  margin: .25cm 0;
+  padding-top: .25cm;
+}
+html body article#contents ul li a {
+  display: block;
+  color: inherit;
+  padding-right: 2cm;
+}
+html body article#contents ul li a::before {
+  content: target-text(attr(href));
+}
+html body article#contents ul li a::after {
+  content: target-counter(attr(href), page);
+  float: right;
+  margin-right: -2cm;
+}

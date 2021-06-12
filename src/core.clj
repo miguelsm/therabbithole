@@ -1,5 +1,6 @@
 (ns core
-  (:require [clojure.java.io :as io]
+  (:require [camel-snake-kebab.core :as csk]
+            [clojure.java.io :as io]
             [clojure.string :as str]
             [hiccup2.core :as hiccup]
             [net.cgrand.enlive-html :as html]
@@ -46,15 +47,25 @@
                          (assoc-in x [1 :style] {:float "right"}))
         header-h1  (->> (html/select header [:h1])
                         (map enlive->hiccup)
-                        first)]
+                        first)
+        header-id  (-> header-h1 last csk/->kebab-case)]
     #_(into [])
     (concat
-      [(into [:h2] (rest header-h1))
+      [(into [:h2 {:id header-id}] (last header-h1))
        [:div {:class "book-cover"}
         header-img
         [:br]
         [:a {:href buy-link} "Buy this book"]]]
       (mapv enlive->hiccup (html/select nodes (:summary-content selectors))))))
+
+(defn extract-toc
+  [file]
+  (let [nodes     (html/html-resource (java.io.StringReader. (slurp file)))
+        header    (html/select nodes (:summary-header selectors))
+        header-h1 (->> (html/select header [:h1])
+                       (map enlive->hiccup)
+                       first)]
+    [:li [:a {:href (str "#" (-> header-h1 last csk/->kebab-case))}]]))
 
 (defn html->md [html]
   (str "\\newpage\n\n" (.convert (CopyDown.) html) "\n\n\\pagebreak\n"))
@@ -76,6 +87,11 @@
                    hiccup/html
                    (str "\n"))
           _    (sspit (str "out/html/" file-name ".html") html)
+          toc  (-> input-html-file
+                   extract-toc
+                   hiccup/html
+                   (str "\n"))
+          _    (sspit (str "out/toc/" file-name ".html") toc)
           #_#_#_#_
           md   (html->md html)
           _    (sspit (str "out/md/" file-name ".md") md)])))
@@ -91,7 +107,7 @@
   ;; save the list of summary urls into a "urls" file
   (spit "urls" (summary-urls library-url))
 
-  (doseq [url (take 100 urls)]
+  (doseq [url (take 25 urls)]
     (try
       (log/info "Processing" url)
       (process-url url)
