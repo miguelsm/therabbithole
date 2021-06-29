@@ -9,6 +9,8 @@ build/
 in/
 out/
 book.html
+book.pdf
+book_without_cover.pdf
 template-with-content.html
 toc-list-items.html
 book.pdf
