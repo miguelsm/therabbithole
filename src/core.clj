@@ -22,13 +22,13 @@
     urls))
 
 (defn enlive->hiccup [el]
-  (if-not (string? el)
-    (->> (map enlive->hiccup (:content el))
-         (concat [(:tag el) (select-keys (:attrs el) [:href :src])])
-         (keep identity)
-         vec)
+  (if (string? el)
     (when-let [s (seq (str/replace el #"\n|\t" ""))]
-      (str/join "" s))))
+      (str/join "" s))
+    (when (:tag el)
+      (->> (map enlive->hiccup (:content el))
+           (concat [(:tag el) (select-keys (:attrs el) [:href :src])])
+           vec))))
 
 (defn url->filename [url]
   (-> url
