@@ -30,7 +30,7 @@
            (concat [(:tag el) (select-keys (:attrs el) [:href :src])])
            vec))))
 
-(defn url->filename [url]
+(defn url->file-name [url]
   (-> url
       (str/split #"\/")
       last))
@@ -76,38 +76,48 @@
   (io/make-parents f)
   (spit f content))
 
+(defn download-html
+  "Save the html from the web into a local file."
+  ([url]
+   (download-html url (str "in/html/" (url->file-name url) ".html")))
+  ([url file-name]
+   (when-not (.exists (io/file file-name))
+     (sspit file-name (slurp url)))))
+
 (defn process-url [url]
-  (let [file-name       (url->filename url)
-        input-html-file (str "in/html/" file-name ".html")]
-    ;; save the html from the web into a local file
-    (when-not (.exists (io/file input-html-file))
-      (sspit input-html-file (slurp url)))
-    (let [html (-> input-html-file
-                   extract-summary
-                   hiccup/html
-                   (str "\n"))
-          _    (sspit (str "out/html/" file-name ".html") html)
-          toc  (-> input-html-file
-                   extract-toc
-                   hiccup/html
-                   (str "\n"))
-          _    (sspit (str "out/toc/" file-name ".html") toc)
-          #_#_#_#_
-          md   (html->md html)
-          _    (sspit (str "out/md/" file-name ".md") md)])))
+  (let [file-name       (url->file-name url)
+        input-html-file (str "in/html/" file-name ".html")
+        html            (-> input-html-file
+                            extract-summary
+                            hiccup/html
+                            (str "\n"))
+        _               (sspit (str "out/html/" file-name ".html") html)
+        toc             (-> input-html-file
+                            extract-toc
+                            hiccup/html
+                            (str "\n"))
+        _               (sspit (str "out/toc/" file-name ".html") toc)
+        #_#_#_#_
+        md              (html->md html)
+        _               (sspit (str "out/md/" file-name ".md") md)]))
 
 (comment
-
-  (def urls (read-string (slurp "urls")))
-
-  (process-url (first urls))
-
-  #_header
 
   ;; save the list of summary urls into a "urls" file
   (spit "urls" (summary-urls library-url))
 
-  (doseq [url (take 25 urls)]
+  (def urls (read-string (slurp "urls")))
+
+  (count urls)
+
+  (doseq [url urls]
+    (try
+      (log/info "Downloading" url)
+      (download-html url)
+      (catch Exception e
+        (log/error "Error downloading" url ": " (.getMessage e)))))
+
+  (doseq [url urls]
     (try
       (log/info "Processing" url)
       (process-url url)
