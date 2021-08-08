@@ -122,3 +122,8 @@ html body article#contents ul li a::after {
   float: right;
   margin-right: -2cm;
 }
+
+html body ol li,
+html body ul li {
+  margin-top: .25cm;
+}
