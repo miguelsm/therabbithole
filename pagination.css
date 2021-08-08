@@ -46,9 +46,31 @@
 @page :blank {
   @bottom-left {
     background: none;
-    content: ''; }
+    content: '';
+  }
   @top-right {
-    content: none; } }
+    content: none;
+  }
+}
+
+@page :first {
+  @bottom-left {
+    background: none;
+    content: '';
+  }
+  @top-right {
+    content: none;
+  }
+}
+
+@page toc {
+  @top-right {
+    content: none;
+  }
+  @bottom-left {
+    content: none;
+  }
+}
 
 @page no-chapter {
   @top-right {
@@ -67,12 +89,12 @@ html body h2 {
 html body article#contents {
   break-before: right;
   break-after: left;
-  page: no-chapter;
 }
 html body article#contents h2 {
   font-size: 20pt;
   font-weight: 400;
   margin-bottom: 3cm;
+  page: toc;
 }
 html body article#contents h3 {
   font-weight: 500;

@@ -6,5 +6,4 @@ sed -e "/$str_content/r chapters.html" -e "/$str_content/d" template.html > temp
 cat out/toc/*.html > toc-list-items.html
 str_toc=__toc__
 sed -e "/$str_toc/r toc-list-items.html" -e "/$str_toc/d" template-with-content.html > book.html
-weasyprint book.html book_without_cover.pdf -s pagination.css
-pdfunite cover.pdf book_without_cover.pdf book.pdf
+weasyprint book.html book.pdf -s pagination.css
