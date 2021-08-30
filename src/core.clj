@@ -13,7 +13,8 @@
 (def selectors
   {:library-link    [:#page :> :#main :> :#primary :> :#content :> :article :> :div :> [:p (html/nth-child 3)] :> :a]
    :summary-header  [:#page :> :#main :> :#primary :> :#content :> :article :> :header]
-   :summary-content [:#page :> :#main :> :#primary :> :#content :> :article :> :.entry-content :> (html/but :.sharedaddy)]})
+   :summary-content [:#page :> :#main :> :#primary :> :#content :> :article :> :.entry-content :> (html/but :.sharedaddy)]
+   :section-heading [(html/re-pred #"((?i)summary|key takeaways|what i got out of it)(:)*")]})
 
 (defn summary-urls [url]
   (let [dom   (html/html-resource (java.net.URL. url))
@@ -21,13 +22,21 @@
         urls  (mapv #(-> % (html/attr-values :href) first) links)]
     urls))
 
+(def allowed-class-token (str (java.util.UUID/randomUUID)))
+
 (defn enlive->hiccup [el]
   (if (string? el)
     (when-let [s (seq (str/replace el #"\n|\t" ""))]
       (str/join "" s))
     (when (:tag el)
       (->> (map enlive->hiccup (:content el))
-           (concat [(:tag el) (select-keys (:attrs el) [:href :src])])
+           (concat [(:tag el)
+                    (into {}
+                      (filter (fn [[k v]]
+                                (or (contains? #{:href :src} k)
+                                    (and (= k :class)
+                                         (str/includes? v allowed-class-token))))
+                              (:attrs el)))])
            vec))))
 
 (defn url->file-name [url]
@@ -56,7 +65,11 @@
         header-img
         [:br]
         [:a {:href buy-link} "Buy this book"]]]
-      (mapv enlive->hiccup (html/select nodes (:summary-content selectors))))))
+      (->> (html/at
+             (html/select nodes (:summary-content selectors))
+             (:section-heading selectors)
+             (html/wrap "span" {:class (str/join " " ["section-heading" allowed-class-token])}))
+           (mapv enlive->hiccup)))))
 
 (defn extract-toc
   [file]
