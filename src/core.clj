@@ -53,12 +53,12 @@
         header-img (as-> (html/select header [:img]) x
                          (map enlive->hiccup x)
                          (first x)
-                         (assoc-in x [1 :style] {:float "right"}))
+                         (assoc-in x [1 :style] {:float "right"})
+                         (update-in x [1 :src] #(str "http://localhost:8080/300,fit/" %)))
         header-h1  (->> (html/select header [:h1])
                         (map enlive->hiccup)
                         first)
         header-id  (-> header-h1 last csk/->kebab-case)]
-    #_(into [])
     (concat
       [(into [:h2 {:id header-id}] (last header-h1))
        [:div {:class "book-cover"}

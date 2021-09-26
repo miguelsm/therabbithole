@@ -5,6 +5,7 @@ with pkgs;
 mkShell {
   buildInputs = [
     clojure
+    go
     # koreader
     maven
     openjdk11
