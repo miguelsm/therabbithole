@@ -101,15 +101,16 @@
   (let [file-name        (url->file-name url)
         input-html-file  (str "in/html/" file-name ".html")
         output-html-file (str "out/html/" file-name ".html")
-        toc-html-file    (str "out/toc/" file-name ".html")
-        #_#_#_#_
-        md               (html->md html)
-        _                (sspit (str "out/md/" file-name ".md") md)]
+        toc-html-file    (str "out/toc/" file-name ".html")]
     (when-not (.exists (io/file output-html-file))
-      (sspit output-html-file (-> input-html-file
-                                  extract-summary
-                                  hiccup/html
-                                  (str "\n"))))
+      (let [html (-> input-html-file
+                     extract-summary
+                     hiccup/html
+                     (str "\n"))
+            _    (sspit output-html-file html)
+            #_
+            (md (html->md html)
+              _ (sspit (str "out/md/" file-name ".md") md))]))
     (when-not (.exists (io/file toc-html-file))
       (sspit toc-html-file (-> input-html-file
                                extract-toc
