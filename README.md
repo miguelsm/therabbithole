@@ -1,14 +1,16 @@
-Start image resizing proxy:
+WIP
+
+Start the image resizing proxy:
 
 ``` sh
 nix-shell
 go get willnorris.com/go/imageproxy/cmd/imageproxy
-$GOPATH/bin/imageproxy
+$GOPATH/bin/imageproxy -cache /tmp/imageproxy
 ```
 
-Generate `html` and save it into `/out` using the REPL and code in `comment` block at the end of `core.clj`.
+Generate the HTML and save it into `./out` using a REPL and the code in the `comment` block at the end of `./src/core.clj`.
 
-Execute generate book script:
+Execute the script to generate the book:
 
 ``` sh
 nix-shell

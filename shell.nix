@@ -6,7 +6,6 @@ mkShell {
   buildInputs = [
     clojure
     go
-    # koreader
     maven
     openjdk11
     # pandoc
